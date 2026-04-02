@@ -82,4 +82,14 @@ object NoteStorage {
     fun setWidgetIndex(context: Context, widgetId: Int, index: Int) {
         prefs(context).edit().putInt(KEY_WIDGET_INDEX + widgetId, index).apply()
     }
+
+    private const val KEY_SORT = "sort_option"
+
+    fun getSortOption(context: Context): String {
+        return prefs(context).getString(KEY_SORT, "NEWEST") ?: "NEWEST"
+    }
+
+    fun setSortOption(context: Context, option: String) {
+        prefs(context).edit().putString(KEY_SORT, option).apply()
+    }
 }

@@ -18,6 +18,15 @@
     <string name="no_notes">No notes yet.\nTap + to create one.</string>
     <string name="widget_description">Displays your latest note on the home screen</string>
     <string name="widget_placeholder">Tap to add a note…</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search notes…</string>
+    <string name="sort">Sort</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_newest">Newest first</string>
+    <string name="sort_oldest">Oldest first</string>
+    <string name="sort_title_az">Title A → Z</string>
+    <string name="sort_title_za">Title Z → A</string>
+    <string name="sort_by_type">By type</string>
     <string name="go_back">Go back</string>
     <string name="prev_note">Previous note</string>
     <string name="next_note">Next note</string>

@@ -4,9 +4,14 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.note.widgets.databinding.ActivityMainBinding
 
@@ -14,11 +19,19 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: NoteAdapter
+    private var allNotes = mutableListOf<Note>()
+    private var currentSort = SortOption.NEWEST
+
+    private enum class SortOption { NEWEST, OLDEST, TITLE_AZ, TITLE_ZA, BY_TYPE }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        currentSort = try {
+            SortOption.valueOf(NoteStorage.getSortOption(this))
+        } catch (_: Exception) { SortOption.NEWEST }
 
         adapter = NoteAdapter(
             notes = mutableListOf(),
@@ -41,11 +54,83 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerNotes.adapter = adapter
 
         binding.fabAdd.setOnClickListener { openTypePicker() }
+
+        binding.btnSearch.setOnClickListener {
+            val isVisible = binding.searchField.visibility == View.VISIBLE
+            if (isVisible) {
+                binding.searchField.visibility = View.GONE
+                binding.searchField.setText("")
+                applySort(allNotes)
+            } else {
+                binding.searchField.visibility = View.VISIBLE
+                binding.searchField.requestFocus()
+            }
+        }
+
+        binding.searchField.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val hasText = !s.isNullOrEmpty()
+                val clear = if (hasText) resources.getDrawable(R.drawable.ic_clear, theme) else null
+                binding.searchField.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, clear, null)
+                filterNotes(s.toString())
+            }
+        })
+
+        binding.searchField.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_UP) {
+                val drawableEnd = binding.searchField.compoundDrawablesRelative[2]
+                if (drawableEnd != null && event.rawX >= binding.searchField.right - binding.searchField.paddingEnd - drawableEnd.intrinsicWidth) {
+                    binding.searchField.setText("")
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+
+        binding.btnSort.setOnClickListener { showSortSheet() }
     }
 
     override fun onResume() {
         super.onResume()
+        binding.searchField.setText("")
+        binding.searchField.visibility = View.GONE
         refreshList()
+    }
+
+    private fun showSortSheet() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_sort, null)
+        dialog.setContentView(view)
+
+        val checks = mapOf(
+            SortOption.NEWEST to view.findViewById<ImageView>(R.id.checkNewest),
+            SortOption.OLDEST to view.findViewById<ImageView>(R.id.checkOldest),
+            SortOption.TITLE_AZ to view.findViewById<ImageView>(R.id.checkTitleAz),
+            SortOption.TITLE_ZA to view.findViewById<ImageView>(R.id.checkTitleZa),
+            SortOption.BY_TYPE to view.findViewById<ImageView>(R.id.checkByType)
+        )
+        checks[currentSort]?.visibility = View.VISIBLE
+
+        val rows = mapOf(
+            SortOption.NEWEST to view.findViewById<LinearLayout>(R.id.sortNewest),
+            SortOption.OLDEST to view.findViewById<LinearLayout>(R.id.sortOldest),
+            SortOption.TITLE_AZ to view.findViewById<LinearLayout>(R.id.sortTitleAz),
+            SortOption.TITLE_ZA to view.findViewById<LinearLayout>(R.id.sortTitleZa),
+            SortOption.BY_TYPE to view.findViewById<LinearLayout>(R.id.sortByType)
+        )
+
+        for ((option, row) in rows) {
+            row?.setOnClickListener {
+                currentSort = option
+                NoteStorage.setSortOption(this, option.name)
+                refreshList()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
     }
 
     private fun openEditor(noteId: Long) {
@@ -59,10 +144,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshList() {
-        val notes = NoteStorage.loadNotes(this)
-        adapter.updateNotes(notes)
-        binding.emptyText.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
-        binding.recyclerNotes.visibility = if (notes.isEmpty()) View.GONE else View.VISIBLE
+        allNotes = NoteStorage.loadNotes(this)
+        val query = binding.searchField.text.toString()
+        if (query.isNotEmpty()) {
+            filterNotes(query)
+        } else {
+            applySort(allNotes)
+        }
+        binding.emptyText.visibility = if (allNotes.isEmpty()) View.VISIBLE else View.GONE
+        binding.recyclerNotes.visibility = if (allNotes.isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    private fun applySort(notes: List<Note>) {
+        val sorted = when (currentSort) {
+            SortOption.NEWEST -> notes.sortedByDescending { it.id }
+            SortOption.OLDEST -> notes.sortedBy { it.id }
+            SortOption.TITLE_AZ -> notes.sortedBy { it.title.lowercase() }
+            SortOption.TITLE_ZA -> notes.sortedByDescending { it.title.lowercase() }
+            SortOption.BY_TYPE -> notes.sortedBy { it.type.ordinal }
+        }
+        adapter.updateNotes(sorted)
+    }
+
+    private fun filterNotes(query: String) {
+        if (query.isEmpty()) {
+            applySort(allNotes)
+            return
+        }
+        val filtered = allNotes.filter {
+            it.title.contains(query, ignoreCase = true) || it.text.contains(query, ignoreCase = true)
+        }
+        applySort(filtered)
     }
 
     private fun updateWidget() {
