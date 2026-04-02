@@ -5,6 +5,8 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import android.widget.RemoteViews
 
 class NoteWidgetProvider : AppWidgetProvider() {
@@ -23,6 +25,15 @@ class NoteWidgetProvider : AppWidgetProvider() {
         for (widgetId in appWidgetIds) {
             updateSingleWidget(context, appWidgetManager, widgetId)
         }
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle
+    ) {
+        updateSingleWidget(context, appWidgetManager, appWidgetId)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -53,12 +64,29 @@ class NoteWidgetProvider : AppWidgetProvider() {
         val views = RemoteViews(context.packageName, R.layout.widget_note)
         val notes = NoteStorage.loadNotes(context)
 
+        // Responsive font sizes based on widget height
+        val options = appWidgetManager.getAppWidgetOptions(widgetId)
+        val minH = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+        val maxH = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+        val minW = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+        val maxW = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0)
+        Log.d("NoteWidget", "minH=$minH maxH=$maxH minW=$minW maxW=$maxW")
+        val heightDp = maxOf(minH, maxH, 110)
+        val widthDp = maxOf(minW, maxW, 250)
+        val sizeFactor = (heightDp + widthDp) / 2f
+        val titleSp = (sizeFactor * 0.04f).coerceIn(13f, 22f)
+        val bodySp = (sizeFactor * 0.05f).coerceIn(14f, 26f)
+        val indicatorSp = (sizeFactor * 0.03f).coerceIn(11f, 16f)
+
+        views.setTextViewTextSize(R.id.widgetTitle, android.util.TypedValue.COMPLEX_UNIT_SP, titleSp)
+        views.setTextViewTextSize(R.id.widgetNoteText, android.util.TypedValue.COMPLEX_UNIT_SP, bodySp)
+        views.setTextViewTextSize(R.id.widgetPageIndicator, android.util.TypedValue.COMPLEX_UNIT_SP, indicatorSp)
+
         if (notes.isEmpty()) {
             views.setTextViewText(R.id.widgetTitle, context.getString(R.string.app_name))
             views.setTextViewText(R.id.widgetNoteText, context.getString(R.string.widget_placeholder))
             views.setTextViewText(R.id.widgetPageIndicator, "")
         } else {
-            // Clamp index to valid range
             var index = NoteStorage.getWidgetIndex(context, widgetId)
             if (index >= notes.size) index = 0
             NoteStorage.setWidgetIndex(context, widgetId, index)
@@ -69,12 +97,18 @@ class NoteWidgetProvider : AppWidgetProvider() {
             views.setTextViewText(R.id.widgetPageIndicator, "${index + 1} / ${notes.size}")
         }
 
-        // Prev button
         views.setOnClickPendingIntent(R.id.btnPrev, makePendingIntent(context, widgetId, ACTION_PREV))
-        // Next button
         views.setOnClickPendingIntent(R.id.btnNext, makePendingIntent(context, widgetId, ACTION_NEXT))
-        // Tap note text → open app
-        val openIntent = Intent(context, MainActivity::class.java)
+
+        val openIntent = if (notes.isNotEmpty()) {
+            var index = NoteStorage.getWidgetIndex(context, widgetId)
+            if (index >= notes.size) index = 0
+            Intent(context, NoteEditActivity::class.java).apply {
+                putExtra(NoteEditActivity.EXTRA_NOTE_ID, notes[index].id)
+            }
+        } else {
+            Intent(context, MainActivity::class.java)
+        }
         val openPending = PendingIntent.getActivity(
             context, widgetId, openIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

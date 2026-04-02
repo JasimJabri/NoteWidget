@@ -30,7 +30,8 @@ Single-module app with these key files:
 - **NoteType** enum — `PLAIN, CHECKLIST, BULLET`
 
 ### Widget
-- **NoteWidgetProvider** — AppWidgetProvider showing current note with left/right chevron arrows to navigate between notes. Title is dynamic (note title). Formats checklist/bullet with unicode symbols. Tap note text opens MainActivity.
+- **NoteWidgetProvider** — AppWidgetProvider showing current note with left/right chevron arrows to navigate between notes. Title is dynamic (note title). Formats checklist/bullet with unicode symbols. Tap note text opens NoteEditActivity for the current note (falls back to MainActivity if no notes).
+- Widget has responsive font sizes — scales based on average of widget height and width using `setTextViewTextSize()` programmatically. `onAppWidgetOptionsChanged` triggers re-render on resize.
 - Widget metadata: `res/xml/note_widget_info.xml` — 250x110dp min, resizable, 30min update.
 
 ### Adapter
@@ -50,6 +51,8 @@ Applied to: note list cards, edit screen background, type picker cards, badges.
 - Delete button requires confirmation via MaterialAlertDialog
 - Theme is Light-only with explicit white windowBackground to avoid dark mode issues
 - App icon uses vector drawable (`@drawable/ic_launcher_foreground`) — no mipmap PNGs
+- Widget font sizing uses average of (height + width) / 2 as sizeFactor, with multipliers: title 0.04, body 0.05, indicator 0.03
+- Multi-layout widget approach (small/medium/large XMLs) was abandoned — programmatic `setTextViewTextSize` is more reliable across launchers
 
 ## Known Issues / Past Bugs Fixed
 - `setBackgroundResource(android.R.attr.selectableItemBackgroundBorderless)` crashes — must resolve theme attribute via TypedValue first

@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:text="@string/app_name"
             android:textColor="#333333"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:gravity="center"
             android:maxLines="1"
@@ -55,7 +55,7 @@
         android:layout_weight="1"
         android:text="@string/widget_placeholder"
         android:textColor="#222222"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:gravity="top|start" />
 
     <!-- Page indicator -->
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="#999999"
-        android:textSize="11sp"
+        android:textSize="13sp"
         android:layout_marginTop="4dp" />
 
 </LinearLayout>
