@@ -37,9 +37,10 @@ class MainActivity : AppCompatActivity() {
             notes = mutableListOf(),
             onNoteClick = { note -> openEditor(note.id) },
             onDeleteClick = { note ->
+                val title = note.title.ifEmpty { "Untitled" }
                 MaterialAlertDialogBuilder(this)
-                    .setTitle(getString(R.string.delete_confirm_title))
-                    .setMessage(getString(R.string.delete_confirm_message))
+                    .setTitle(getString(R.string.delete_confirm_title, title))
+                    .setMessage(getString(R.string.delete_confirm_message, title))
                     .setNegativeButton(getString(R.string.cancel), null)
                     .setPositiveButton(getString(R.string.delete)) { _, _ ->
                         NoteStorage.deleteNote(this, note.id)

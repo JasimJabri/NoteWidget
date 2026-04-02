@@ -10,8 +10,8 @@
     <string name="add_note">Add note</string>
     <string name="add_item">+ Add item</string>
     <string name="delete_note">Delete note</string>
-    <string name="delete_confirm_title">Delete note?</string>
-    <string name="delete_confirm_message">This note will be permanently deleted.</string>
+    <string name="delete_confirm_title">Delete "%1$s"?</string>
+    <string name="delete_confirm_message">"%1$s" will be permanently deleted.</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="delete_item_title">Remove item?</string>
