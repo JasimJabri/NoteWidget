@@ -87,14 +87,4 @@
 
     </ScrollView>
 
-    <!-- Add item button for checklist/bullet -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAddItem"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_item"
-        android:textSize="14sp"
-        android:visibility="gone" />
-
 </LinearLayout>

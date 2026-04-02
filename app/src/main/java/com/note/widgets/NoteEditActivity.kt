@@ -25,6 +25,8 @@ class NoteEditActivity : AppCompatActivity() {
     private var noteId: Long = -1L
     private var noteType: NoteType = NoteType.PLAIN
 
+    private lateinit var addItemBtn: com.google.android.material.button.MaterialButton
+
     companion object {
         const val EXTRA_NOTE_ID = "note_id"
         private const val SEPARATOR = "\n"
@@ -84,19 +86,30 @@ class NoteEditActivity : AppCompatActivity() {
 
     private fun setupListMode(text: String, isChecklist: Boolean) {
         binding.itemsScroll.visibility = View.VISIBLE
-        binding.btnAddItem.visibility = View.VISIBLE
 
         val items = if (text.isEmpty()) mutableListOf("") else text.split(SEPARATOR).toMutableList()
         for (item in items) {
             addItemRow(item, isChecklist)
         }
 
-        binding.btnAddItem.setOnClickListener {
-            addItemRow("", isChecklist)
-            // Focus the new item
-            val last = binding.itemsContainer.getChildAt(binding.itemsContainer.childCount - 1)
-            last.findViewById<EditText>(R.id.itemEdit)?.requestFocus()
+        // Add button inside the list at the end
+        addItemBtn = com.google.android.material.button.MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
+            this.text = getString(R.string.add_item)
+            this.textSize = 13f
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = 4
+                gravity = android.view.Gravity.CENTER_HORIZONTAL
+            }
+            setOnClickListener {
+                addItemRow("", isChecklist)
+                val last = binding.itemsContainer.getChildAt(binding.itemsContainer.childCount - 2)
+                last.findViewById<EditText>(R.id.itemEdit)?.requestFocus()
+            }
         }
+        binding.itemsContainer.addView(addItemBtn)
     }
 
     private fun addItemRow(text: String, isChecklist: Boolean) {
@@ -143,32 +156,29 @@ class NoteEditActivity : AppCompatActivity() {
 
         // Delete button
         val deleteBtn = ImageButton(this).apply {
-            setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+            setImageResource(R.drawable.ic_delete)
             // Resolve the theme attribute to a drawable for the ripple background
             val outValue = android.util.TypedValue()
             context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
             setBackgroundResource(outValue.resourceId)
             layoutParams = LinearLayout.LayoutParams(80, 80).apply { marginStart = 8 }
             setOnClickListener {
-                if (isChecklist) {
-                    MaterialAlertDialogBuilder(this@NoteEditActivity)
-                        .setTitle(getString(R.string.delete_item_title))
-                        .setMessage(getString(R.string.delete_item_message))
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                            binding.itemsContainer.removeView(row)
-                            saveFromItems()
-                        }
-                        .show()
-                } else {
-                    binding.itemsContainer.removeView(row)
-                    saveFromItems()
-                }
+                MaterialAlertDialogBuilder(this@NoteEditActivity)
+                    .setTitle(getString(R.string.delete_item_title))
+                    .setMessage(getString(R.string.delete_item_message))
+                    .setNegativeButton(getString(R.string.cancel), null)
+                    .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                        binding.itemsContainer.removeView(row)
+                        saveFromItems()
+                    }
+                    .show()
             }
         }
         row.addView(deleteBtn)
 
-        binding.itemsContainer.addView(row)
+        // Insert row before the add button
+        val insertIndex = binding.itemsContainer.childCount - (if (::addItemBtn.isInitialized) 1 else 0)
+        binding.itemsContainer.addView(row, insertIndex)
     }
 
     private fun createItemEditText(text: String): EditText {
@@ -190,16 +200,18 @@ class NoteEditActivity : AppCompatActivity() {
     private fun saveFromItems() {
         val lines = mutableListOf<String>()
         for (i in 0 until binding.itemsContainer.childCount) {
-            val row = binding.itemsContainer.getChildAt(i) as LinearLayout
-            val edit = row.findViewById<EditText>(R.id.itemEdit)
-            val text = edit.text.toString()
+            val child = binding.itemsContainer.getChildAt(i)
+            if (child is LinearLayout) {
+                val edit = child.findViewById<EditText>(R.id.itemEdit) ?: continue
+                val text = edit.text.toString()
 
-            if (noteType == NoteType.CHECKLIST) {
-                val checkBox = row.getChildAt(0) as CheckBox
-                val prefix = if (checkBox.isChecked) CHECKED_PREFIX else UNCHECKED_PREFIX
-                lines.add(prefix + text)
-            } else {
-                lines.add(text)
+                if (noteType == NoteType.CHECKLIST) {
+                    val checkBox = child.getChildAt(0) as CheckBox
+                    val prefix = if (checkBox.isChecked) CHECKED_PREFIX else UNCHECKED_PREFIX
+                    lines.add(prefix + text)
+                } else {
+                    lines.add(text)
+                }
             }
         }
         val joined = lines.joinToString(SEPARATOR)
