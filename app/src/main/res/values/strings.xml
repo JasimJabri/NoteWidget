@@ -13,6 +13,8 @@
     <string name="delete_confirm_message">This note will be permanently deleted.</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="delete_item_title">Remove item?</string>
+    <string name="delete_item_message">This item will be removed from the checklist.</string>
     <string name="no_notes">No notes yet.\nTap + to create one.</string>
     <string name="widget_description">Displays your latest note on the home screen</string>
     <string name="widget_placeholder">Tap to add a note…</string>

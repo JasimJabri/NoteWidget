@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.note.widgets.databinding.ActivityNoteEditBinding
 
 class NoteEditActivity : AppCompatActivity() {
@@ -67,7 +68,12 @@ class NoteEditActivity : AppCompatActivity() {
 
         binding.editTitle.addTextChangedListener(autoSaveWatcher)
 
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            })
+            finish()
+        }
     }
 
     private fun setupPlainMode(text: String) {
@@ -144,8 +150,20 @@ class NoteEditActivity : AppCompatActivity() {
             setBackgroundResource(outValue.resourceId)
             layoutParams = LinearLayout.LayoutParams(80, 80).apply { marginStart = 8 }
             setOnClickListener {
-                binding.itemsContainer.removeView(row)
-                saveFromItems()
+                if (isChecklist) {
+                    MaterialAlertDialogBuilder(this@NoteEditActivity)
+                        .setTitle(getString(R.string.delete_item_title))
+                        .setMessage(getString(R.string.delete_item_message))
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                            binding.itemsContainer.removeView(row)
+                            saveFromItems()
+                        }
+                        .show()
+                } else {
+                    binding.itemsContainer.removeView(row)
+                    saveFromItems()
+                }
             }
         }
         row.addView(deleteBtn)

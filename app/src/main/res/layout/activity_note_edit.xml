@@ -3,7 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="24dp"
+    android:paddingTop="36dp"
     android:background="#FFFFFFFF">
 
     <!-- Top row: title + back button -->
@@ -24,7 +27,9 @@
             android:textColor="#1A1A1A"
             android:textColorHint="#888888"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:padding="0dp"
+            android:minHeight="0dp" />
 
         <ImageButton
             android:id="@+id/btnBack"

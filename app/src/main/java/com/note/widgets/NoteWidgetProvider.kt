@@ -72,13 +72,16 @@ class NoteWidgetProvider : AppWidgetProvider() {
         val heightDp = maxOf(minH, maxH, 110)
         val widthDp = maxOf(minW, maxW, 250)
         val sizeFactor = (heightDp + widthDp) / 2f
-        val titleSp = (sizeFactor * 0.04f).coerceIn(13f, 22f)
-        val bodySp = (sizeFactor * 0.05f).coerceIn(14f, 26f)
-        val indicatorSp = (sizeFactor * 0.03f).coerceIn(11f, 16f)
+        val titleSp = (sizeFactor * 0.05f).coerceIn(15f, 26f)
+        val bodySp = (sizeFactor * 0.06f).coerceIn(16f, 30f)
+        val indicatorSp = (sizeFactor * 0.035f).coerceIn(13f, 19f)
+        val arrowSp = titleSp * 1.3f
 
         views.setTextViewTextSize(R.id.widgetTitle, android.util.TypedValue.COMPLEX_UNIT_SP, titleSp)
         views.setTextViewTextSize(R.id.widgetNoteText, android.util.TypedValue.COMPLEX_UNIT_SP, bodySp)
         views.setTextViewTextSize(R.id.widgetPageIndicator, android.util.TypedValue.COMPLEX_UNIT_SP, indicatorSp)
+        views.setTextViewTextSize(R.id.btnPrev, android.util.TypedValue.COMPLEX_UNIT_SP, arrowSp)
+        views.setTextViewTextSize(R.id.btnNext, android.util.TypedValue.COMPLEX_UNIT_SP, arrowSp)
 
         if (notes.isEmpty()) {
             views.setTextViewText(R.id.widgetTitle, context.getString(R.string.app_name))
