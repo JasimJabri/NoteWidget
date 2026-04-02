@@ -92,4 +92,14 @@ object NoteStorage {
     fun setSortOption(context: Context, option: String) {
         prefs(context).edit().putString(KEY_SORT, option).apply()
     }
+
+    private const val KEY_FONT_SIZE = "font_size"
+
+    fun getFontSize(context: Context): Int {
+        return prefs(context).getInt(KEY_FONT_SIZE, 1)
+    }
+
+    fun setFontSize(context: Context, size: Int) {
+        prefs(context).edit().putInt(KEY_FONT_SIZE, size).apply()
+    }
 }

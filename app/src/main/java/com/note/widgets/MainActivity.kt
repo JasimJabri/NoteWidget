@@ -112,6 +112,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnSort.setOnClickListener { showSortSheet() }
 
+        binding.btnSettings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
         // FAB shrink/extend on scroll
         binding.recyclerNotes.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

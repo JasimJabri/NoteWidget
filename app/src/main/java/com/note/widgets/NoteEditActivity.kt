@@ -76,6 +76,15 @@ class NoteEditActivity : AppCompatActivity() {
             })
             finish()
         }
+
+        applyFontSize()
+    }
+
+    private fun applyFontSize() {
+        val sizeIndex = NoteStorage.getFontSize(this)
+        val bodySize = SettingsActivity.FONT_SIZES[sizeIndex]
+        val itemSize = SettingsActivity.ITEM_FONT_SIZES[sizeIndex]
+        binding.editNote.textSize = bodySize
     }
 
     private fun setupPlainMode(text: String) {
@@ -182,10 +191,12 @@ class NoteEditActivity : AppCompatActivity() {
     }
 
     private fun createItemEditText(text: String): EditText {
+        val sizeIndex = NoteStorage.getFontSize(this)
+        val itemSize = SettingsActivity.ITEM_FONT_SIZES[sizeIndex]
         return EditText(this).apply {
             id = R.id.itemEdit
             setText(text)
-            textSize = 16f
+            textSize = itemSize
             setTextColor(0xFF1A1A1A.toInt())
             setHintTextColor(0xFF888888.toInt())
             hint = getString(R.string.hint_item)
