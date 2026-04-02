@@ -140,7 +140,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openTypePicker() {
-        startActivity(Intent(this, NoteTypePickerActivity::class.java))
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_new_note, null)
+        dialog.setContentView(view)
+
+        fun createNote(type: NoteType) {
+            val note = NoteStorage.addNote(this, "", "", type)
+            openEditor(note.id)
+            dialog.dismiss()
+        }
+
+        view.findViewById<View>(R.id.cardPlain).setOnClickListener { createNote(NoteType.PLAIN) }
+        view.findViewById<View>(R.id.cardChecklist).setOnClickListener { createNote(NoteType.CHECKLIST) }
+        view.findViewById<View>(R.id.cardBullet).setOnClickListener { createNote(NoteType.BULLET) }
+
+        dialog.show()
     }
 
     private fun refreshList() {

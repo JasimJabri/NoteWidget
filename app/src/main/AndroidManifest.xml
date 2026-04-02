@@ -21,10 +21,6 @@
             android:name="com.note.widgets.NoteEditActivity"
             android:exported="false" />
 
-        <activity
-            android:name="com.note.widgets.NoteTypePickerActivity"
-            android:exported="false" />
-
         <!-- Home screen widget -->
         <receiver
             android:name=".NoteWidgetProvider"

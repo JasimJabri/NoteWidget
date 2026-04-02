@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Note Widget – Quick Notes</string>
+    <string name="main_title">Note Widget</string>
     <string name="hint_write_note">Write your note here…</string>
     <string name="hint_title">Title</string>
     <string name="hint_item">Item</string>
@@ -31,6 +32,7 @@
     <string name="prev_note">Previous note</string>
     <string name="next_note">Next note</string>
     <string name="choose_note_type">Choose note type</string>
+    <string name="create_new_note">Create new note</string>
     <string name="type_plain">Plain Text</string>
     <string name="type_plain_desc">A simple free-form text note</string>
     <string name="type_checklist">Checklist</string>
