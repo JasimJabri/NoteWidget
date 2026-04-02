@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.RemoteViews
 
 class NoteWidgetProvider : AppWidgetProvider() {
@@ -70,7 +69,6 @@ class NoteWidgetProvider : AppWidgetProvider() {
         val maxH = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
         val minW = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
         val maxW = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0)
-        Log.d("NoteWidget", "minH=$minH maxH=$maxH minW=$minW maxW=$maxW")
         val heightDp = maxOf(minH, maxH, 110)
         val widthDp = maxOf(minW, maxW, 250)
         val sizeFactor = (heightDp + widthDp) / 2f
