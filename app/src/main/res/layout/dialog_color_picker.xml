@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bottom_sheet_bg">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/handle_bar" />
+
+    <TextView
+        android:id="@+id/pickerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#1A1A1A"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Preview + hex -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <View
+                    android:id="@+id/colorPreviewBox"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/hexInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/edit_text_bg"
+                    android:hint="@string/hex_hint"
+                    android:inputType="text"
+                    android:padding="12dp"
+                    android:textColor="#1A1A1A"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="14sp"
+                    android:singleLine="true" />
+
+            </LinearLayout>
+
+            <!-- Saturation/Value box -->
+            <com.note.widgets.SatValView
+                android:id="@+id/satValBox"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Hue bar -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hue"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp" />
+
+            <com.note.widgets.HueBarView
+                android:id="@+id/hueBar"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Opacity slider -->
+            <TextView
+                android:id="@+id/opacityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/opacity"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
+
+            <SeekBar
+                android:id="@+id/alphaSlider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="255"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
+
+            <!-- Presets -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/presets"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:id="@+id/presetGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Recent -->
+            <TextView
+                android:id="@+id/recentLabelPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recent"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/recentRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

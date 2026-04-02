@@ -61,6 +61,11 @@ class NoteWidgetProvider : AppWidgetProvider() {
         widgetId: Int
     ) {
         val views = RemoteViews(context.packageName, R.layout.widget_note)
+
+        // Apply widget background color
+        val bgColor = NoteStorage.getWidgetBgColor(context)
+        views.setInt(R.id.widgetRoot, "setBackgroundColor", bgColor)
+
         val notes = NoteStorage.loadNotes(context)
 
         // Responsive font sizes based on widget height
@@ -74,11 +79,19 @@ class NoteWidgetProvider : AppWidgetProvider() {
         val sizeFactor = (heightDp + widthDp) / 2f
         val titleSp = (sizeFactor * 0.05f).coerceIn(15f, 26f)
         val bodySp = (sizeFactor * 0.06f).coerceIn(16f, 30f)
+
+        // Apply user font size preference as multiplier
+        val fontMultiplier = floatArrayOf(0.8f, 1.0f, 1.2f, 1.4f)
+        val fontIndex = NoteStorage.getFontSize(context)
+        val userScale = fontMultiplier[fontIndex]
+        val userColor = SettingsActivity.FONT_COLORS[NoteStorage.getFontColor(context)]
+
         val indicatorSp = (sizeFactor * 0.035f).coerceIn(13f, 19f)
         val arrowSp = titleSp * 1.3f
 
-        views.setTextViewTextSize(R.id.widgetTitle, android.util.TypedValue.COMPLEX_UNIT_SP, titleSp)
-        views.setTextViewTextSize(R.id.widgetNoteText, android.util.TypedValue.COMPLEX_UNIT_SP, bodySp)
+        views.setTextViewTextSize(R.id.widgetTitle, android.util.TypedValue.COMPLEX_UNIT_SP, titleSp * userScale)
+        views.setTextViewTextSize(R.id.widgetNoteText, android.util.TypedValue.COMPLEX_UNIT_SP, bodySp * userScale)
+        views.setTextColor(R.id.widgetNoteText, userColor)
         views.setTextViewTextSize(R.id.widgetPageIndicator, android.util.TypedValue.COMPLEX_UNIT_SP, indicatorSp)
         views.setTextViewTextSize(R.id.btnPrev, android.util.TypedValue.COMPLEX_UNIT_SP, arrowSp)
         views.setTextViewTextSize(R.id.btnNext, android.util.TypedValue.COMPLEX_UNIT_SP, arrowSp)

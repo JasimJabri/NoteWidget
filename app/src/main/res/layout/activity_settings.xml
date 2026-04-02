@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:paddingBottom="24dp"
     android:paddingTop="48dp"
     android:background="#FAFAFA">
 
@@ -16,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="32dp">
+        android:layout_marginBottom="24dp">
 
         <TextView
             android:layout_width="0dp"
@@ -40,108 +39,215 @@
 
     </LinearLayout>
 
-    <!-- Font Size Section -->
-    <com.google.android.material.card.MaterialCardView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="#FFFFFF">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/font_size"
-                android:textColor="#1A1A1A"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/font_size_desc"
-                android:textColor="#999999"
-                android:textSize="13sp"
-                android:layout_marginBottom="20dp" />
-
-            <!-- Size labels -->
-            <LinearLayout
+            <!-- Font Size -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
 
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/font_small"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"
-                    android:gravity="start" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/font_medium"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/font_size"
+                        android:textColor="#1A1A1A"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/font_large"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"
-                    android:gravity="center" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/font_size_desc"
+                        android:textColor="#999999"
+                        android:textSize="13sp"
+                        android:layout_marginBottom="20dp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/font_xlarge"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"
-                    android:gravity="end" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
 
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/font_small"
+                            android:textColor="#AAAAAA"
+                            android:textSize="12sp"
+                            android:gravity="start" />
 
-            <com.google.android.material.slider.Slider
-                android:id="@+id/fontSlider"
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/font_medium"
+                            android:textColor="#AAAAAA"
+                            android:textSize="12sp"
+                            android:gravity="center" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/font_large"
+                            android:textColor="#AAAAAA"
+                            android:textSize="12sp"
+                            android:gravity="center" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/font_xlarge"
+                            android:textColor="#AAAAAA"
+                            android:textSize="12sp"
+                            android:gravity="end" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/fontSlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="0"
+                        android:valueTo="3"
+                        android:stepSize="1"
+                        app:trackColorActive="#6750A4"
+                        app:trackColorInactive="#E0E0E0"
+                        app:thumbColor="#6750A4"
+                        app:tickColor="#6750A4" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Font Color -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:valueFrom="0"
-                android:valueTo="3"
-                android:stepSize="1"
-                app:trackColorActive="#6750A4"
-                app:trackColorInactive="#E0E0E0"
-                app:thumbColor="#6750A4"
-                app:tickColor="#6750A4" />
-
-            <!-- Preview -->
-            <TextView
-                android:id="@+id/fontPreview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/font_preview"
-                android:textColor="#1A1A1A"
-                android:textSize="18sp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/edit_text_bg"
-                android:padding="16dp" />
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:id="@+id/fontColorRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/font_color"
+                            android:textColor="#1A1A1A"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/font_color_desc"
+                            android:textColor="#999999"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/fontColorSwatch"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="12dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Widget Background -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:id="@+id/bgColorRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/widget_bg"
+                            android:textColor="#1A1A1A"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/widget_bg_desc"
+                            android:textColor="#999999"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/bgColorSwatch"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="12dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
 
 </LinearLayout>

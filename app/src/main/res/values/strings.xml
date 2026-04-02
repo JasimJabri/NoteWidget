@@ -54,4 +54,16 @@
     <string name="font_large">Large</string>
     <string name="font_xlarge">Extra Large</string>
     <string name="font_preview">The quick brown fox jumps over the lazy dog.</string>
+    <string name="font_color">Font Color</string>
+    <string name="font_color_desc">Choose a text color for your notes</string>
+    <string name="widget_bg">Widget Background</string>
+    <string name="widget_bg_desc">Choose a background color for the widget</string>
+    <string name="presets">PRESETS</string>
+    <string name="recent">RECENT</string>
+    <string name="hue">Hue</string>
+    <string name="saturation">Saturation</string>
+    <string name="brightness">Brightness</string>
+    <string name="opacity">Opacity</string>
+    <string name="hex_hint">#RRGGBB</string>
+    <string name="select">Select</string>
 </resources>

@@ -22,6 +22,7 @@ Single-module app with these key files:
   - Subtitle: "Note Widget · 3 notes"
   - Search icon (toggles pill-shaped search bar with animation, opens keyboard)
   - Sort icon (opens bottom sheet with 5 sort options, persisted in SharedPreferences)
+  - Settings icon (opens SettingsActivity)
   - 2-column GridLayoutManager for note cards
   - Extended FAB "New Note" — shrinks to icon on scroll down, extends on scroll up
   - FAB opens bottom sheet type picker (not a separate activity)
@@ -34,9 +35,25 @@ Single-module app with these key files:
   - Checklist: dynamic rows with CheckBox + EditText + delete. Checked items get strikethrough. Stored as `[x] item` / `[ ] item`. Delete requires confirmation.
   - Bullet: dynamic rows with `•` prefix + EditText + delete. Delete requires confirmation.
   - "+ Add item" button inside the scrollable list at the end
+- **SettingsActivity** — settings screen with:
+  - Font Size: Material slider (Small/Medium/Large/Extra Large)
+  - Font Color: tappable row with swatch → opens ColorPickerHelper dialog
+  - Widget Background: tappable row with swatch → opens ColorPickerHelper dialog with opacity
+
+### Color Picker
+- **ColorPickerHelper** — reusable bottom sheet color picker dialog with:
+  - 2D SatValView (custom View) — tap/drag for saturation (X) and brightness (Y)
+  - HueBarView (custom View) — horizontal rainbow bar for hue selection
+  - Opacity SeekBar (optional, for widget background)
+  - Hex input field
+  - Preset color grid (5 columns)
+  - Recent colors row
+  - Select button
+- **SatValView** — custom View rendering white→hue horizontal gradient + transparent→black vertical gradient with circle indicator
+- **HueBarView** — custom View rendering rainbow gradient with circle indicator
 
 ### Data
-- **NoteStorage** (object) — CRUD operations on notes stored as JSON array in SharedPreferences (`note_prefs`). Also stores per-widget index and sort preference.
+- **NoteStorage** (object) — CRUD operations on notes stored as JSON array in SharedPreferences (`note_prefs`). Also stores per-widget index, sort preference, font size, font color, widget background color, and recent background colors.
 - **Note** data class — `id: Long, title: String, text: String, type: NoteType`
 - **NoteType** enum — `PLAIN, CHECKLIST, BULLET`
 
@@ -44,6 +61,9 @@ Single-module app with these key files:
 - **NoteWidgetProvider** — AppWidgetProvider showing current note with left/right triangle arrows (◂ ▸ as TextViews) to navigate between notes. Title is dynamic (note title). Formats checklist/bullet with unicode symbols. Tap note text opens NoteEditActivity for the current note (falls back to MainActivity if no notes).
 - Widget has responsive font sizes — scales based on average of widget height and width using `setTextViewTextSize()` programmatically. `onAppWidgetOptionsChanged` triggers re-render on resize.
 - Font multipliers: title 0.05, body 0.06, indicator 0.035, arrows = title × 1.3
+- User font size preference applied as multiplier (0.8x/1.0x/1.2x/1.4x) on title and body
+- User font color applied to widget body text
+- User background color applied via `setInt(widgetRoot, "setBackgroundColor", color)`
 - Widget body has 1.3x line spacing and 8dp horizontal / 6dp top padding.
 - Widget metadata: `res/xml/note_widget_info.xml` — 250x110dp min, resizable, 30min update.
 
@@ -61,6 +81,12 @@ Single-module app with these key files:
 
 Applied to: note list cards, edit screen background, bottom sheet type picker cards, badges.
 
+## Font Colors (presets)
+Black, Light Gray, Yellow, Green, Blue, Red, Purple, Orange, Brown, Blue Gray
+
+## Widget Background Presets
+Transparent, White, Light Gray, Warm Yellow, Mint Green, Light Blue, Lavender, Blush Pink, Semi Black, Semi Dark Gray, Semi Navy, Semi Maroon, Black, Dark Gray, Dark Blue, Dark Slate
+
 ## UI Details
 - Background: #FAFAFA everywhere (main, edit, status bar)
 - Light status bar icons
@@ -69,7 +95,7 @@ Applied to: note list cards, edit screen background, bottom sheet type picker ca
 - Badge: 12dp rounded corners
 - Delete confirmation shows note title: Delete "Packing"?
 - Search has clear (X) icon when text is present
-- Header icons (search, sort) aligned to top of row
+- Header icons (settings, sort, search) aligned to top of row
 - Edit screen title aligned with main screen title (matching paddingTop, includeFontPadding=false)
 
 ## Sort Options
@@ -78,6 +104,12 @@ Applied to: note list cards, edit screen background, bottom sheet type picker ca
 3. Title A → Z
 4. Title Z → A
 5. By type
+
+## Settings
+- Font Size: 4 levels via slider (14sp/18sp/22sp/26sp), persisted
+- Font Color: 10 presets + custom via HSV picker, persisted
+- Widget Background: 16 presets (incl. transparent + semi-transparent) + custom via HSV picker with opacity, persisted
+- Recent background colors tracked (up to 5)
 
 ## Key Decisions
 - Auto-save (no save button) — TextWatcher on all editable fields
@@ -90,12 +122,14 @@ Applied to: note list cards, edit screen background, bottom sheet type picker ca
 - Widget arrows are TextViews (not ImageButtons) for dynamic sizing
 - Widget font sizing uses average of (height + width) / 2 as sizeFactor
 - Multi-layout widget approach was abandoned — programmatic `setTextViewTextSize` is more reliable
+- Color picker uses custom Views (SatValView, HueBarView) instead of Compose (app is View-based)
 
 ## Known Issues / Past Bugs Fixed
 - `setBackgroundResource(android.R.attr.selectableItemBackgroundBorderless)` crashes — must resolve theme attribute via TypedValue first
 - mipmap/ic_launcher not found — switched to drawable vector reference in manifest
 - EditText has internal padding even with padding="0dp" — use includeFontPadding="false" + minHeight="0dp"
 - `text` parameter shadowing in Kotlin `apply` block — use `this.text` explicitly
+- checkerboard.xml with percentage values crashes AAPT — removed, using ⊘ symbol instead
 
 ## Git
 - Remote: https://github.com/JasimJabri/NoteWidget.git

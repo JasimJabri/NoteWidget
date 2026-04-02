@@ -102,4 +102,44 @@ object NoteStorage {
     fun setFontSize(context: Context, size: Int) {
         prefs(context).edit().putInt(KEY_FONT_SIZE, size).apply()
     }
+
+    private const val KEY_FONT_COLOR = "font_color"
+
+    fun getFontColor(context: Context): Int {
+        return prefs(context).getInt(KEY_FONT_COLOR, 0)
+    }
+
+    fun setFontColor(context: Context, colorIndex: Int) {
+        prefs(context).edit().putInt(KEY_FONT_COLOR, colorIndex).apply()
+    }
+
+    private const val KEY_WIDGET_BG = "widget_bg_color"
+    private const val KEY_RECENT_BG = "recent_bg_colors"
+
+    fun getWidgetBgColor(context: Context): Int {
+        return prefs(context).getInt(KEY_WIDGET_BG, 0xFFFFFFFF.toInt())
+    }
+
+    fun setWidgetBgColor(context: Context, color: Int) {
+        prefs(context).edit().putInt(KEY_WIDGET_BG, color).apply()
+        addRecentBgColor(context, color)
+    }
+
+    fun getRecentBgColors(context: Context): List<Int> {
+        val json = prefs(context).getString(KEY_RECENT_BG, "[]") ?: "[]"
+        val array = org.json.JSONArray(json)
+        val colors = mutableListOf<Int>()
+        for (i in 0 until array.length()) colors.add(array.getInt(i))
+        return colors
+    }
+
+    private fun addRecentBgColor(context: Context, color: Int) {
+        val recents = getRecentBgColors(context).toMutableList()
+        recents.remove(color)
+        recents.add(0, color)
+        val trimmed = recents.take(5)
+        val array = org.json.JSONArray()
+        for (c in trimmed) array.put(c)
+        prefs(context).edit().putString(KEY_RECENT_BG, array.toString()).apply()
+    }
 }
