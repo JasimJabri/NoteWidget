@@ -7,7 +7,7 @@
     android:paddingEnd="24dp"
     android:paddingBottom="24dp"
     android:paddingTop="40dp"
-    android:background="#FFFFFFFF">
+    android:background="#FAFAFA">
 
     <!-- Top row: title + back button -->
     <LinearLayout

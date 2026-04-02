@@ -10,10 +10,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.note.widgets.databinding.ActivityMainBinding
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,22 +52,10 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
-        binding.recyclerNotes.layoutManager = LinearLayoutManager(this)
+        binding.recyclerNotes.layoutManager = GridLayoutManager(this, 2)
         binding.recyclerNotes.adapter = adapter
 
         binding.fabAdd.setOnClickListener { openTypePicker() }
-
-        binding.btnSearch.setOnClickListener {
-            val isVisible = binding.searchField.visibility == View.VISIBLE
-            if (isVisible) {
-                binding.searchField.visibility = View.GONE
-                binding.searchField.setText("")
-                applySort(allNotes)
-            } else {
-                binding.searchField.visibility = View.VISIBLE
-                binding.searchField.requestFocus()
-            }
-        }
 
         binding.searchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -96,8 +85,18 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         binding.searchField.setText("")
-        binding.searchField.visibility = View.GONE
+        updateGreeting()
         refreshList()
+    }
+
+    private fun updateGreeting() {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val greet = when {
+            hour < 12 -> getString(R.string.greeting_morning)
+            hour < 17 -> getString(R.string.greeting_afternoon)
+            else -> getString(R.string.greeting_evening)
+        }
+        binding.greeting.text = greet
     }
 
     private fun showSortSheet() {
@@ -160,6 +159,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshList() {
         allNotes = NoteStorage.loadNotes(this)
+        val count = allNotes.size
+        val countText = resources.getQuantityString(R.plurals.note_count, count, count)
+        binding.noteCount.text = getString(R.string.main_subtitle, countText)
+
         val query = binding.searchField.text.toString()
         if (query.isNotEmpty()) {
             filterNotes(query)

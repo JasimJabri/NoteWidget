@@ -25,14 +25,24 @@ class NoteAdapter(
         val ctx = holder.binding.root.context
 
         holder.binding.noteTitle.text = note.title.ifEmpty { "Untitled" }
+        holder.binding.noteText.text = formatPreview(note)
+
+        // Type badge
         holder.binding.noteTypeBadge.text = when (note.type) {
             NoteType.PLAIN -> ctx.getString(R.string.type_plain)
             NoteType.CHECKLIST -> ctx.getString(R.string.type_checklist)
             NoteType.BULLET -> ctx.getString(R.string.type_bullet)
         }
-        holder.binding.noteText.text = formatPreview(note)
 
-        // Apply type-specific colors
+        // Type icon
+        val iconRes = when (note.type) {
+            NoteType.PLAIN -> R.drawable.ic_type_plain
+            NoteType.CHECKLIST -> R.drawable.ic_type_checklist
+            NoteType.BULLET -> R.drawable.ic_type_bullet
+        }
+        holder.binding.noteTypeIcon.setImageResource(iconRes)
+
+        // Type-specific colors
         val (cardColor, badgeColor, badgeTextColor) = when (note.type) {
             NoteType.PLAIN -> Triple(R.color.plain_card, R.color.plain_badge, R.color.plain_badge_text)
             NoteType.CHECKLIST -> Triple(R.color.checklist_card, R.color.checklist_badge, R.color.checklist_badge_text)
@@ -42,8 +52,13 @@ class NoteAdapter(
         holder.binding.noteTypeBadge.background.setTint(ContextCompat.getColor(ctx, badgeColor))
         holder.binding.noteTypeBadge.setTextColor(ContextCompat.getColor(ctx, badgeTextColor))
 
+        // Tap to open
         holder.binding.root.setOnClickListener { onNoteClick(note) }
-        holder.binding.btnDelete.setOnClickListener { onDeleteClick(note) }
+        // Long-press to delete
+        holder.binding.root.setOnLongClickListener {
+            onDeleteClick(note)
+            true
+        }
     }
 
     override fun getItemCount() = notes.size
