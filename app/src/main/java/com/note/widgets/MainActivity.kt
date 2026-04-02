@@ -7,10 +7,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.note.widgets.databinding.ActivityMainBinding
@@ -57,6 +60,34 @@ class MainActivity : AppCompatActivity() {
 
         binding.fabAdd.setOnClickListener { openTypePicker() }
 
+        binding.btnSearch.setOnClickListener {
+            val isVisible = binding.searchBar.visibility == View.VISIBLE
+            if (isVisible) {
+                binding.searchBar.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .withEndAction {
+                        binding.searchBar.visibility = View.GONE
+                        binding.searchBar.alpha = 1f
+                    }
+                    .start()
+                binding.searchField.setText("")
+                applySort(allNotes)
+            } else {
+                binding.searchBar.alpha = 0f
+                binding.searchBar.visibility = View.VISIBLE
+                binding.searchBar.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+                binding.searchField.requestFocus()
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.searchField, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
+
         binding.searchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -80,11 +111,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSort.setOnClickListener { showSortSheet() }
+
+        // FAB shrink/extend on scroll
+        binding.recyclerNotes.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) binding.fabAdd.shrink() else if (dy < 0) binding.fabAdd.extend()
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
         binding.searchField.setText("")
+        binding.searchBar.visibility = View.GONE
+        binding.noResults.visibility = View.GONE
         updateGreeting()
         refreshList()
     }
@@ -169,7 +209,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             applySort(allNotes)
         }
-        binding.emptyText.visibility = if (allNotes.isEmpty()) View.VISIBLE else View.GONE
+        binding.emptyState.visibility = if (allNotes.isEmpty()) View.VISIBLE else View.GONE
         binding.recyclerNotes.visibility = if (allNotes.isEmpty()) View.GONE else View.VISIBLE
     }
 
@@ -186,12 +226,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun filterNotes(query: String) {
         if (query.isEmpty()) {
+            binding.noResults.visibility = View.GONE
+            binding.recyclerNotes.visibility = View.VISIBLE
             applySort(allNotes)
             return
         }
         val filtered = allNotes.filter {
             it.title.contains(query, ignoreCase = true) || it.text.contains(query, ignoreCase = true)
         }
+        binding.noResults.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
+        binding.recyclerNotes.visibility = if (filtered.isEmpty()) View.GONE else View.VISIBLE
         applySort(filtered)
     }
 

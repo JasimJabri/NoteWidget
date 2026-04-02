@@ -47,6 +47,15 @@
             </LinearLayout>
 
             <ImageButton
+                android:id="@+id/btnSearch"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/search"
+                android:src="@drawable/ic_search"
+                android:scaleType="centerInside" />
+
+            <ImageButton
                 android:id="@+id/btnSort"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
@@ -59,6 +68,7 @@
 
         <!-- Pill search bar -->
         <LinearLayout
+            android:id="@+id/searchBar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
@@ -66,8 +76,9 @@
             android:background="@drawable/search_bar_bg"
             android:paddingStart="16dp"
             android:paddingEnd="12dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="20dp"
@@ -91,15 +102,49 @@
         </LinearLayout>
 
         <!-- Empty state -->
-        <TextView
-            android:id="@+id/emptyText"
+        <LinearLayout
+            android:id="@+id/emptyState"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/no_notes"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_empty_notes"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_notes_title"
+                android:textColor="#AAAAAA"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_notes_subtitle"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- No search results -->
+        <TextView
+            android:id="@+id/noResults"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/no_results"
             android:textColor="#BBBBBB"
             android:textSize="16sp"
-            android:lineSpacingMultiplier="1.4"
             android:visibility="gone" />
 
         <!-- Notes grid -->
