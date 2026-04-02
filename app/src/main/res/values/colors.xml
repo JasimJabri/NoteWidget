@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Plain Text — warm cream -->
+    <color name="plain_card">#FFF8F0</color>
+    <color name="plain_badge">#F0E4D0</color>
+    <color name="plain_badge_text">#8A7350</color>
+
+    <!-- Checklist — soft blue -->
+    <color name="checklist_card">#F0F4FF</color>
+    <color name="checklist_badge">#D6E4FF</color>
+    <color name="checklist_badge_text">#4A6FA5</color>
+
+    <!-- Bullet List — soft green -->
+    <color name="bullet_card">#F0FAF0</color>
+    <color name="bullet_badge">#D4EDDA</color>
+    <color name="bullet_badge_text">#3D7A4A</color>
+</resources>
