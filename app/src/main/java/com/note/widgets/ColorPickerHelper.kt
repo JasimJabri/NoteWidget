@@ -1,8 +1,11 @@
 package com.note.widgets
 
 import android.content.Context
-import android.graphics.Color
+import android.annotation.SuppressLint
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,10 +25,15 @@ class ColorPickerHelper(
     private var alpha = 255
     private var updatingFromCode = false
 
+    @SuppressLint("InflateParams")
     fun show() {
         val dialog = BottomSheetDialog(context)
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_color_picker, null)
         dialog.setContentView(view)
+
+        // Expand bottom sheet fully so layout_weight works
+        dialog.behavior.peekHeight = (context.resources.displayMetrics.heightPixels * 0.85).toInt()
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 
         val titleView = view.findViewById<TextView>(R.id.pickerTitle)
         val preview = view.findViewById<View>(R.id.colorPreviewBox)
@@ -59,13 +67,7 @@ class ColorPickerHelper(
             updatingFromCode = true
             val color = currentColor()
             val dp = context.resources.displayMetrics.density
-            preview.background = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = 12f * dp
-                setColor(color)
-                if (Color.alpha(color) < 128)
-                    setStroke((2 * dp).toInt(), 0xFFDDDDDD.toInt())
-            }
+            preview.background = makeCheckerPreview(color, 12f * dp)
             satValBox.hue = hsv[0]
             satValBox.setColor(hsv[1], hsv[2])
             hueBar.setHue(hsv[0])
@@ -151,60 +153,51 @@ class ColorPickerHelper(
         container.removeAllViews()
         val dp = context.resources.displayMetrics.density
         val size = (36 * dp).toInt()
-        val margin = (5 * dp).toInt()
         val colCount = 5
 
         for (rowStart in colors.indices step colCount) {
             val row = LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply { bottomMargin = (6 * dp).toInt() }
             }
+
             for (i in rowStart until minOf(rowStart + colCount, colors.size)) {
                 val color = colors[i]
                 val isTransparent = Color.alpha(color) == 0
-                val frame = FrameLayout(context).apply {
-                    layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                        marginStart = margin; marginEnd = margin
-                    }
+
+                // Wrapper with weight for even spacing
+                val wrapper = LinearLayout(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    gravity = Gravity.CENTER
                 }
-                val circle = View(context).apply {
-                    layoutParams = FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                    )
-                    background = GradientDrawable().apply {
-                        shape = GradientDrawable.OVAL
-                        if (isTransparent) {
-                            setColor(0xFFEEEEEE.toInt())
-                            setStroke((2 * dp).toInt(), 0xFFCCCCCC.toInt())
-                        } else {
+
+                val frame = FrameLayout(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(size, size)
+                }
+                if (isTransparent) {
+                    frame.addView(makeCheckerView(size))
+                } else {
+                    val circle = View(context).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT
+                        )
+                        background = GradientDrawable().apply {
+                            shape = GradientDrawable.OVAL
                             setColor(color)
                             val lum = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
                             if (lum > 0.85 || Color.alpha(color) < 128)
                                 setStroke((2 * dp).toInt(), 0xFFDDDDDD.toInt())
                         }
                     }
-                }
-                frame.addView(circle)
-                if (isTransparent) {
-                    val slash = TextView(context).apply {
-                        layoutParams = FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER
-                        )
-                        text = "\u2298"
-                        setTextColor(0xFF999999.toInt())
-                        textSize = 14f
-                        gravity = Gravity.CENTER
-                    }
-                    frame.addView(slash)
+                    frame.addView(circle)
                 }
                 frame.setOnClickListener { onClick(color) }
-                row.addView(frame)
+                wrapper.addView(frame)
+                row.addView(wrapper)
             }
             container.addView(row)
         }
@@ -236,6 +229,59 @@ class ColorPickerHelper(
             frame.addView(circle)
             frame.setOnClickListener { onClick(color) }
             container.addView(frame)
+        }
+    }
+
+    private fun makeCheckerBitmap(size: Int, squareSize: Int = 8): Bitmap {
+        val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bmp)
+        val light = Paint().apply { color = 0xFFFFFFFF.toInt() }
+        val dark = Paint().apply { color = 0xFFCCCCCC.toInt() }
+        val cols = size / squareSize + 1
+        for (r in 0 until cols) {
+            for (c in 0 until cols) {
+                val p = if ((r + c) % 2 == 0) light else dark
+                canvas.drawRect(
+                    (c * squareSize).toFloat(), (r * squareSize).toFloat(),
+                    ((c + 1) * squareSize).toFloat(), ((r + 1) * squareSize).toFloat(), p
+                )
+            }
+        }
+        return bmp
+    }
+
+    private fun makeCheckerView(size: Int): View {
+        val dp = context.resources.displayMetrics.density
+        val sq = (6 * dp).toInt()
+        return View(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            val bmp = makeCheckerBitmap(size, sq)
+            val checker = BitmapDrawable(context.resources, bmp)
+            clipToOutline = true
+            outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: android.view.View, outline: android.graphics.Outline) {
+                    outline.setOval(0, 0, view.width, view.height)
+                }
+            }
+            background = checker
+        }
+    }
+
+    private fun makeCheckerPreview(color: Int, cornerRadius: Float): android.graphics.drawable.Drawable {
+        val dp = context.resources.displayMetrics.density
+        val sq = (8 * dp).toInt()
+        val bmp = makeCheckerBitmap(200, sq)
+        val checker = BitmapDrawable(context.resources, bmp)
+        val colorLayer = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            this.cornerRadius = cornerRadius
+            setColor(color)
+        }
+        return LayerDrawable(arrayOf(checker, colorLayer)).apply {
+            // Clip to rounded rect
         }
     }
 }

@@ -83,8 +83,7 @@ class NoteEditActivity : AppCompatActivity() {
         val bodySize = SettingsActivity.FONT_SIZES[sizeIndex]
         binding.editNote.textSize = bodySize
 
-        val colorIndex = NoteStorage.getFontColor(this)
-        val fontColor = SettingsActivity.FONT_COLORS[colorIndex]
+        val fontColor = NoteStorage.getFontColor(this)
         binding.editNote.setTextColor(fontColor)
     }
 
@@ -155,7 +154,7 @@ class NoteEditActivity : AppCompatActivity() {
             val bullet = TextView(this).apply {
                 this.text = "  •  "
                 textSize = 18f
-                setTextColor(SettingsActivity.FONT_COLORS[NoteStorage.getFontColor(context)])
+                setTextColor(NoteStorage.getFontColor(context))
             }
             row.addView(bullet)
 
@@ -194,7 +193,7 @@ class NoteEditActivity : AppCompatActivity() {
             id = R.id.itemEdit
             setText(text)
             textSize = itemSize
-            setTextColor(SettingsActivity.FONT_COLORS[NoteStorage.getFontColor(context)])
+            setTextColor(NoteStorage.getFontColor(context))
             setHintTextColor(0xFF888888.toInt())
             hint = getString(R.string.hint_item)
             background = null

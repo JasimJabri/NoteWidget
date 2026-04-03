@@ -84,7 +84,7 @@ class NoteWidgetProvider : AppWidgetProvider() {
         val fontMultiplier = floatArrayOf(0.8f, 1.0f, 1.2f, 1.4f)
         val fontIndex = NoteStorage.getFontSize(context)
         val userScale = fontMultiplier[fontIndex]
-        val userColor = SettingsActivity.FONT_COLORS[NoteStorage.getFontColor(context)]
+        val userColor = NoteStorage.getFontColor(context)
 
         val indicatorSp = (sizeFactor * 0.035f).coerceIn(13f, 19f)
         val arrowSp = titleSp * 1.3f

@@ -106,11 +106,11 @@ object NoteStorage {
     private const val KEY_FONT_COLOR = "font_color"
 
     fun getFontColor(context: Context): Int {
-        return prefs(context).getInt(KEY_FONT_COLOR, 0)
+        return prefs(context).getInt(KEY_FONT_COLOR, 0xFF1A1A1A.toInt())
     }
 
-    fun setFontColor(context: Context, colorIndex: Int) {
-        prefs(context).edit().putInt(KEY_FONT_COLOR, colorIndex).apply()
+    fun setFontColor(context: Context, color: Int) {
+        prefs(context).edit().putInt(KEY_FONT_COLOR, color).apply()
     }
 
     private const val KEY_WIDGET_BG = "widget_bg_color"

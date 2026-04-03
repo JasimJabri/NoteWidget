@@ -3,6 +3,7 @@ package com.note.widgets
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -45,7 +46,6 @@ class SettingsActivity : AppCompatActivity() {
             0x80000000.toInt(),
             0x80333333.toInt(),
             0x80000033.toInt(),
-            0x80330000.toInt(),
             0xFF000000.toInt(),
             0xFF333333.toInt(),
             0xFF1A1A2E.toInt(),
@@ -91,7 +91,7 @@ class SettingsActivity : AppCompatActivity() {
         // Font color — show current, tap to open picker
         updateFontColorPreview()
         binding.fontColorRow.setOnClickListener {
-            val currentColor = FONT_COLORS[NoteStorage.getFontColor(this)]
+            val currentColor = NoteStorage.getFontColor(this)
             ColorPickerHelper(
                 context = this,
                 title = getString(R.string.font_color),
@@ -100,12 +100,7 @@ class SettingsActivity : AppCompatActivity() {
                 initialColor = currentColor,
                 recentColors = emptyList()
             ) { color ->
-                val index = FONT_COLORS.indexOf(color)
-                if (index >= 0) {
-                    NoteStorage.setFontColor(this, index)
-                } else {
-                    NoteStorage.setFontColor(this, 0)
-                }
+                NoteStorage.setFontColor(this, color)
                 updateFontColorPreview()
                 updateWidget()
             }.show()
@@ -132,7 +127,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun updateFontColorPreview() {
-        val color = FONT_COLORS[NoteStorage.getFontColor(this)]
+        val color = NoteStorage.getFontColor(this)
         binding.fontColorSwatch.background = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
             setColor(color)
@@ -142,11 +137,38 @@ class SettingsActivity : AppCompatActivity() {
     private fun updateBgColorPreview() {
         val color = NoteStorage.getWidgetBgColor(this)
         val dp = resources.displayMetrics.density
-        binding.bgColorSwatch.background = GradientDrawable().apply {
-            shape = GradientDrawable.OVAL
-            setColor(color)
-            if (Color.alpha(color) < 128 || color == 0xFFFFFFFF.toInt())
-                setStroke((2 * dp).toInt(), 0xFFDDDDDD.toInt())
+        if (Color.alpha(color) < 255) {
+            val sq = (6 * dp).toInt()
+            val size = (40 * dp).toInt()
+            val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+            val canvas = android.graphics.Canvas(bmp)
+            val light = android.graphics.Paint().apply { this.color = 0xFFFFFFFF.toInt() }
+            val dark = android.graphics.Paint().apply { this.color = 0xFFCCCCCC.toInt() }
+            val cols = size / sq + 1
+            for (r in 0 until cols) {
+                for (c in 0 until cols) {
+                    canvas.drawRect(
+                        (c * sq).toFloat(), (r * sq).toFloat(),
+                        ((c + 1) * sq).toFloat(), ((r + 1) * sq).toFloat(),
+                        if ((r + c) % 2 == 0) light else dark
+                    )
+                }
+            }
+            val colorPaint = android.graphics.Paint().apply { this.color = color }
+            canvas.drawRect(0f, 0f, size.toFloat(), size.toFloat(), colorPaint)
+            val checker = android.graphics.drawable.BitmapDrawable(resources, bmp)
+            binding.bgColorSwatch.clipToOutline = true
+            binding.bgColorSwatch.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: android.graphics.Outline) {
+                    outline.setOval(0, 0, view.width, view.height)
+                }
+            }
+            binding.bgColorSwatch.background = checker
+        } else {
+            binding.bgColorSwatch.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(color)
+            }
         }
     }
 

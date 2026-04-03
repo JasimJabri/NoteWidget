@@ -1,5 +1,6 @@
 package com.note.widgets
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
@@ -15,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private enum class SortOption { NEWEST, OLDEST, TITLE_AZ, TITLE_ZA, BY_TYPE }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -122,17 +125,18 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val hasText = !s.isNullOrEmpty()
-                val clear = if (hasText) resources.getDrawable(R.drawable.ic_clear, theme) else null
+                val clear = if (hasText) ResourcesCompat.getDrawable(resources, R.drawable.ic_clear, theme) else null
                 binding.searchField.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, clear, null)
                 filterNotes(s.toString())
             }
         })
 
-        binding.searchField.setOnTouchListener { _, event ->
+        binding.searchField.setOnTouchListener { v, event ->
             if (event.action == android.view.MotionEvent.ACTION_UP) {
                 val drawableEnd = binding.searchField.compoundDrawablesRelative[2]
                 if (drawableEnd != null && event.rawX >= binding.searchField.right - binding.searchField.paddingEnd - drawableEnd.intrinsicWidth) {
                     binding.searchField.setText("")
+                    v.performClick()
                     return@setOnTouchListener true
                 }
             }
@@ -172,6 +176,7 @@ class MainActivity : AppCompatActivity() {
         headerTitle.text = greet
     }
 
+    @SuppressLint("InflateParams")
     private fun showSortSheet() {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_sort, null)
@@ -212,6 +217,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    @SuppressLint("InflateParams")
     private fun openTypePicker() {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_new_note, null)
