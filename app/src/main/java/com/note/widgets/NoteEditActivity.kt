@@ -45,14 +45,12 @@ class NoteEditActivity : AppCompatActivity() {
         noteType = note.type
         binding.editTitle.setText(note.title)
 
-        // Show type badge
         binding.typeBadge.text = when (noteType) {
             NoteType.PLAIN -> getString(R.string.type_plain)
             NoteType.CHECKLIST -> getString(R.string.type_checklist)
             NoteType.BULLET -> getString(R.string.type_bullet)
         }
 
-        // Apply type-specific colors
         val (bgColor, badgeColor, badgeTextColor) = when (noteType) {
             NoteType.PLAIN -> Triple(R.color.plain_card, R.color.plain_badge, R.color.plain_badge_text)
             NoteType.CHECKLIST -> Triple(R.color.checklist_card, R.color.checklist_badge, R.color.checklist_badge_text)
@@ -60,7 +58,7 @@ class NoteEditActivity : AppCompatActivity() {
         }
         binding.root.setBackgroundColor(ContextCompat.getColor(this, bgColor))
         binding.typeBadge.setTextColor(ContextCompat.getColor(this, badgeTextColor))
-        binding.typeBadge.setBackgroundColor(ContextCompat.getColor(this, badgeColor))
+        binding.typeBadge.background.setTint(ContextCompat.getColor(this, badgeColor))
 
         when (noteType) {
             NoteType.PLAIN -> setupPlainMode(note.text)
@@ -104,7 +102,6 @@ class NoteEditActivity : AppCompatActivity() {
             addItemRow(item, isChecklist)
         }
 
-        // Add button inside the list at the end
         addItemBtn = com.google.android.material.button.MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle).apply {
             this.text = getString(R.string.add_item)
             this.textSize = 13f
@@ -166,10 +163,8 @@ class NoteEditActivity : AppCompatActivity() {
             row.addView(editText)
         }
 
-        // Delete button
         val deleteBtn = ImageButton(this).apply {
             setImageResource(R.drawable.ic_delete)
-            // Resolve the theme attribute to a drawable for the ripple background
             val outValue = android.util.TypedValue()
             context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
             setBackgroundResource(outValue.resourceId)
@@ -188,7 +183,6 @@ class NoteEditActivity : AppCompatActivity() {
         }
         row.addView(deleteBtn)
 
-        // Insert row before the add button
         val insertIndex = binding.itemsContainer.childCount - (if (::addItemBtn.isInitialized) 1 else 0)
         binding.itemsContainer.addView(row, insertIndex)
     }
@@ -218,7 +212,6 @@ class NoteEditActivity : AppCompatActivity() {
             if (child is LinearLayout) {
                 val edit = child.findViewById<EditText>(R.id.itemEdit) ?: continue
                 val text = edit.text.toString()
-
                 if (noteType == NoteType.CHECKLIST) {
                     val checkBox = child.getChildAt(0) as CheckBox
                     val prefix = if (checkBox.isChecked) CHECKED_PREFIX else UNCHECKED_PREFIX
@@ -228,8 +221,7 @@ class NoteEditActivity : AppCompatActivity() {
                 }
             }
         }
-        val joined = lines.joinToString(SEPARATOR)
-        NoteStorage.updateNote(this, noteId, binding.editTitle.text.toString(), joined)
+        NoteStorage.updateNote(this, noteId, binding.editTitle.text.toString(), lines.joinToString(SEPARATOR))
         updateWidget()
     }
 
@@ -238,12 +230,7 @@ class NoteEditActivity : AppCompatActivity() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         override fun afterTextChanged(s: Editable?) {
             if (noteType == NoteType.PLAIN) {
-                NoteStorage.updateNote(
-                    this@NoteEditActivity,
-                    noteId,
-                    binding.editTitle.text.toString(),
-                    binding.editNote.text.toString()
-                )
+                NoteStorage.updateNote(this@NoteEditActivity, noteId, binding.editTitle.text.toString(), binding.editNote.text.toString())
                 updateWidget()
             } else {
                 saveFromItems()

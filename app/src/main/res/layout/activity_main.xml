@@ -8,164 +8,110 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="48dp">
+        android:orientation="vertical">
 
-        <!-- Greeting + note count -->
+        <include layout="@layout/layout_header" />
+
+        <!-- Content (padded) -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="12dp">
 
+            <!-- Pill search bar -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:id="@+id/searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/search_bar_bg"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/greeting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_search"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/searchField"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/search_hint"
+                    android:inputType="text"
                     android:textColor="#1A1A1A"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:includeFontPadding="false" />
-
-                <TextView
-                    android:id="@+id/noteCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#999999"
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp" />
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="15sp"
+                    android:singleLine="true" />
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnSettings"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="top"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/settings"
-                android:src="@drawable/ic_settings"
-                android:scaleType="centerInside" />
-
-            <ImageButton
-                android:id="@+id/btnSort"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="top"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/sort"
-                android:src="@drawable/ic_sort"
-                android:scaleType="centerInside" />
-
-            <ImageButton
-                android:id="@+id/btnSearch"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="top"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/search"
-                android:src="@drawable/ic_search"
-                android:scaleType="centerInside" />
-
-        </LinearLayout>
-
-        <!-- Pill search bar -->
-        <LinearLayout
-            android:id="@+id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/search_bar_bg"
-            android:paddingStart="16dp"
-            android:paddingEnd="12dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_search"
-                android:layout_marginEnd="12dp" />
-
-            <EditText
-                android:id="@+id/searchField"
-                android:layout_width="0dp"
+            <!-- Empty state -->
+            <LinearLayout
+                android:id="@+id/emptyState"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_empty_notes"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_notes_title"
+                    android:textColor="#AAAAAA"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_notes_subtitle"
+                    android:textColor="#CCCCCC"
+                    android:textSize="14sp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <!-- No search results -->
+            <TextView
+                android:id="@+id/noResults"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/search_hint"
-                android:inputType="text"
-                android:textColor="#1A1A1A"
-                android:textColorHint="#AAAAAA"
-                android:textSize="15sp"
-                android:singleLine="true" />
+                android:gravity="center"
+                android:text="@string/no_results"
+                android:textColor="#BBBBBB"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <!-- Notes grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerNotes"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:paddingBottom="80dp" />
 
         </LinearLayout>
-
-        <!-- Empty state -->
-        <LinearLayout
-            android:id="@+id/emptyState"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_empty_notes"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_notes_title"
-                android:textColor="#AAAAAA"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_notes_subtitle"
-                android:textColor="#CCCCCC"
-                android:textSize="14sp"
-                android:gravity="center" />
-
-        </LinearLayout>
-
-        <!-- No search results -->
-        <TextView
-            android:id="@+id/noResults"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/no_results"
-            android:textColor="#BBBBBB"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
-        <!-- Notes grid -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerNotes"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingBottom="80dp" />
 
     </LinearLayout>
 

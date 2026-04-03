@@ -7,6 +7,9 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.slider.Slider
 import com.note.widgets.databinding.ActivitySettingsBinding
@@ -54,6 +57,29 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Setup header
+        val headerTitle = findViewById<TextView>(R.id.headerTitle)
+        val headerSubtitle = findViewById<TextView>(R.id.headerSubtitle)
+        val headerIcons = findViewById<LinearLayout>(R.id.headerIcons)
+
+        headerTitle.text = getString(R.string.settings)
+        headerSubtitle.text = getString(R.string.settings_subtitle)
+
+        val btnBack = ImageButton(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                (48 * resources.displayMetrics.density).toInt(),
+                (48 * resources.displayMetrics.density).toInt()
+            )
+            setImageResource(R.drawable.ic_back)
+            scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+            val outValue = android.util.TypedValue()
+            context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+            setBackgroundResource(outValue.resourceId)
+            setPadding((4 * resources.displayMetrics.density).toInt(), 0, 0, 0)
+        }
+        headerIcons.addView(btnBack)
+        btnBack.setOnClickListener { finish() }
 
         // Font size slider
         binding.fontSlider.value = NoteStorage.getFontSize(this).toFloat()
@@ -103,7 +129,6 @@ class SettingsActivity : AppCompatActivity() {
             }.show()
         }
 
-        binding.btnBack.setOnClickListener { finish() }
     }
 
     private fun updateFontColorPreview() {

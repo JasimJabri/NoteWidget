@@ -9,8 +9,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: NoteAdapter
+    private lateinit var headerTitle: TextView
+    private lateinit var headerSubtitle: TextView
     private var allNotes = mutableListOf<Note>()
     private var currentSort = SortOption.NEWEST
 
@@ -32,6 +36,31 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Setup header
+        headerTitle = findViewById(R.id.headerTitle)
+        headerSubtitle = findViewById(R.id.headerSubtitle)
+        val headerIcons = findViewById<LinearLayout>(R.id.headerIcons)
+
+        // Add icons to header
+        fun addIcon(drawableRes: Int, desc: String): ImageButton {
+            return ImageButton(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    (44 * resources.displayMetrics.density).toInt(),
+                    (44 * resources.displayMetrics.density).toInt()
+                )
+                setImageResource(drawableRes)
+                scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+                val outValue = android.util.TypedValue()
+                context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+                setBackgroundResource(outValue.resourceId)
+                contentDescription = desc
+            }.also { headerIcons.addView(it) }
+        }
+
+        val btnSettings = addIcon(R.drawable.ic_settings, getString(R.string.settings))
+        val btnSort = addIcon(R.drawable.ic_sort, getString(R.string.sort))
+        val btnSearch = addIcon(R.drawable.ic_search, getString(R.string.search))
 
         currentSort = try {
             SortOption.valueOf(NoteStorage.getSortOption(this))
@@ -60,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.fabAdd.setOnClickListener { openTypePicker() }
 
-        binding.btnSearch.setOnClickListener {
+        btnSearch.setOnClickListener {
             val isVisible = binding.searchBar.visibility == View.VISIBLE
             if (isVisible) {
                 binding.searchBar.animate()
@@ -110,9 +139,9 @@ class MainActivity : AppCompatActivity() {
             false
         }
 
-        binding.btnSort.setOnClickListener { showSortSheet() }
+        btnSort.setOnClickListener { showSortSheet() }
 
-        binding.btnSettings.setOnClickListener {
+        btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
@@ -140,7 +169,7 @@ class MainActivity : AppCompatActivity() {
             hour < 17 -> getString(R.string.greeting_afternoon)
             else -> getString(R.string.greeting_evening)
         }
-        binding.greeting.text = greet
+        headerTitle.text = greet
     }
 
     private fun showSortSheet() {
@@ -205,7 +234,7 @@ class MainActivity : AppCompatActivity() {
         allNotes = NoteStorage.loadNotes(this)
         val count = allNotes.size
         val countText = resources.getQuantityString(R.plurals.note_count, count, count)
-        binding.noteCount.text = getString(R.string.main_subtitle, countText)
+        headerSubtitle.text = getString(R.string.main_subtitle, countText)
 
         val query = binding.searchField.text.toString()
         if (query.isNotEmpty()) {

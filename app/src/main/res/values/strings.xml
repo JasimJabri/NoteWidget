@@ -47,6 +47,7 @@
     <string name="type_bullet">Bullet List</string>
     <string name="type_bullet_desc">An organized list with bullet points</string>
     <string name="settings">Settings</string>
+    <string name="settings_subtitle">Customize your experience</string>
     <string name="font_size">Font Size</string>
     <string name="font_size_desc">Adjust the text size in the note editor</string>
     <string name="font_small">Small</string>

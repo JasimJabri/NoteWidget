@@ -3,44 +3,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="24dp"
-    android:paddingTop="40dp"
+    android:paddingTop="24dp"
     android:background="#FAFAFA">
 
-    <!-- Top row: title + back button -->
+    <!-- Title row (padded, matches layout_header) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:layout_marginBottom="8dp">
 
-        <EditText
-            android:id="@+id/editTitle"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@null"
-            android:hint="@string/hint_title"
-            android:inputType="textCapWords"
-            android:textColor="#1A1A1A"
-            android:textColorHint="#888888"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:padding="0dp"
-            android:minHeight="0dp"
-            android:includeFontPadding="false" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/typeBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#888888"
-            android:textSize="12sp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            <EditText
+                android:id="@+id/editTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/hint_title"
+                android:inputType="textCapWords"
+                android:textColor="#1A1A1A"
+                android:textColorHint="#888888"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:includeFontPadding="false" />
+
+            <TextView
+                android:id="@+id/typeBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/badge_bg"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:textColor="#888888"
+                android:textSize="11sp"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnBack"
@@ -54,38 +63,57 @@
 
     </LinearLayout>
 
-    <!-- Plain text mode -->
-    <EditText
-        android:id="@+id/editNote"
+    <!-- Full-width divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E8E8E8"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Content (padded) -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/edit_text_bg"
-        android:gravity="top|start"
-        android:hint="@string/hint_write_note"
-        android:inputType="textMultiLine"
-        android:padding="16dp"
-        android:textColor="#1A1A1A"
-        android:textColorHint="#888888"
-        android:textSize="18sp"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
 
-    <!-- Checklist / Bullet list mode -->
-    <ScrollView
-        android:id="@+id/itemsScroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/edit_text_bg"
-        android:padding="12dp"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/itemsContainer"
+        <!-- Plain text mode -->
+        <EditText
+            android:id="@+id/editNote"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="top|start"
+            android:hint="@string/hint_write_note"
+            android:inputType="textMultiLine"
+            android:padding="16dp"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#888888"
+            android:textSize="18sp"
+            android:visibility="gone" />
 
-    </ScrollView>
+        <!-- Checklist / Bullet list mode -->
+        <ScrollView
+            android:id="@+id/itemsScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_bg"
+            android:padding="12dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/itemsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </ScrollView>
+
+    </LinearLayout>
 
 </LinearLayout>
