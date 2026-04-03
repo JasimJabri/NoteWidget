@@ -69,10 +69,6 @@ object NoteStorage {
         saveNotes(context, notes)
     }
 
-    fun getLatestNote(context: Context): String {
-        return loadNotes(context).firstOrNull()?.text ?: ""
-    }
-
     private const val KEY_WIDGET_INDEX = "widget_index_"
 
     fun getWidgetIndex(context: Context, widgetId: Int): Int {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Note Widget – Quick Notes</string>
-    <string name="main_title">Note Widget</string>
     <string name="main_subtitle">Note Widget · %1$s</string>
     <string name="greeting_morning">Good Morning ☀️</string>
     <string name="greeting_afternoon">Good Afternoon 🌤️</string>
@@ -10,10 +9,7 @@
     <string name="hint_title">Title</string>
     <string name="hint_item">Item</string>
     <string name="new_note">New Note</string>
-    <string name="edit_note">Edit Note</string>
-    <string name="add_note">Add note</string>
     <string name="add_item">+ Add item</string>
-    <string name="delete_note">Delete note</string>
     <string name="delete_confirm_title">Delete "%1$s"?</string>
     <string name="delete_confirm_message">"%1$s" will be permanently deleted.</string>
     <string name="cancel">Cancel</string>
@@ -38,7 +34,6 @@
     <string name="go_back">Go back</string>
     <string name="prev_note">Previous note</string>
     <string name="next_note">Next note</string>
-    <string name="choose_note_type">Choose note type</string>
     <string name="create_new_note">Create new note</string>
     <string name="type_plain">Plain Text</string>
     <string name="type_plain_desc">A simple free-form text note</string>
@@ -54,7 +49,6 @@
     <string name="font_medium">Medium</string>
     <string name="font_large">Large</string>
     <string name="font_xlarge">Extra Large</string>
-    <string name="font_preview">The quick brown fox jumps over the lazy dog.</string>
     <string name="font_color">Font Color</string>
     <string name="font_color_desc">Choose a text color for your notes</string>
     <string name="widget_bg">Widget Background</string>
@@ -62,8 +56,6 @@
     <string name="presets">PRESETS</string>
     <string name="recent">RECENT</string>
     <string name="hue">Hue</string>
-    <string name="saturation">Saturation</string>
-    <string name="brightness">Brightness</string>
     <string name="opacity">Opacity</string>
     <string name="hex_hint">#RRGGBB</string>
     <string name="select">Select</string>
