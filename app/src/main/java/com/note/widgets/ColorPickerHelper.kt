@@ -67,7 +67,13 @@ class ColorPickerHelper(
             updatingFromCode = true
             val color = currentColor()
             val dp = context.resources.displayMetrics.density
-            preview.background = makeCheckerPreview(color, 12f * dp)
+            preview.background = makeCheckerPreview(color)
+            preview.clipToOutline = true
+            preview.outlineProvider = object : android.view.ViewOutlineProvider() {
+                override fun getOutline(view: android.view.View, outline: android.graphics.Outline) {
+                    outline.setOval(0, 0, view.width, view.height)
+                }
+            }
             satValBox.hue = hsv[0]
             satValBox.setColor(hsv[1], hsv[2])
             hueBar.setHue(hsv[0])
@@ -270,18 +276,15 @@ class ColorPickerHelper(
         }
     }
 
-    private fun makeCheckerPreview(color: Int, cornerRadius: Float): android.graphics.drawable.Drawable {
+    private fun makeCheckerPreview(color: Int): android.graphics.drawable.Drawable {
         val dp = context.resources.displayMetrics.density
         val sq = (8 * dp).toInt()
         val bmp = makeCheckerBitmap(200, sq)
         val checker = BitmapDrawable(context.resources, bmp)
         val colorLayer = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            this.cornerRadius = cornerRadius
+            shape = GradientDrawable.OVAL
             setColor(color)
         }
-        return LayerDrawable(arrayOf(checker, colorLayer)).apply {
-            // Clip to rounded rect
-        }
+        return LayerDrawable(arrayOf(checker, colorLayer))
     }
 }
